@@ -40,6 +40,31 @@ DELETE: Delete user by id (before deleting check whether he/she will have issued
  * validity
  * Is there any fines
 
+new Date()
+Thu Jan 18 2024 10:58:00 GMT+0530 (India Standard Time)
+
+new Date("01/01/2000")
+Sat Jan 01 2000 00:00:00 GMT+0530 (India Standard Time)
+
+const date = new Date("01/01/2000");
+undefined
+
+date
+Sat Jan 01 2000 00:00:00 GMT+0530 (India Standard Time)
+
+Math.floor(date/1000*60*24);
+1363197600000
+
+Math.floor(date/1000*60*24);
+1363197600000
+
+let dateNew = new Date();
+undefined
+
+Math.floor(dateNew/(1000*60*24));
+1184413
+
+
  ## /books
  GET: Get all the books
  POST:Create/add a new book
@@ -49,4 +74,7 @@ DELETE: Delete user by id (before deleting check whether he/she will have issued
  PUT: Update a book by id
 
 ## /books/issued
+GET: Get all issued books 
+
+## /books/issued/withfine
 GET: Get all issued books with their fines
