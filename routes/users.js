@@ -178,7 +178,7 @@ router.get("/subscription-details/:id", (req, res) => {
         return date;
     };
     // Jan 1 1970 UTC
-    let returnDate = getDateInDays(user.returnDate);
+    let returnDateInDays = getDateInDays(user.returnDateInDays);
     let currentDate = getDateInDays();
     let subscriptionDate = getDateInDays(user.subscriptionDate);
     let subscriptionExpiration = subscriptionType(subscriptionDate);
@@ -188,7 +188,7 @@ router.get("/subscription-details/:id", (req, res) => {
         isSubcriptionExpired: subscriptionExpiration <= currentDate,
         daysLeftForExpiration: subscriptionExpiration <= currentDate ? 0 : subscriptionExpiration - currentDate,
         fine:
-            returnDate < currentDate ? subscriptionExpiration <= currentDate
+            returnDateInDays < currentDate ? subscriptionExpiration <= currentDate
                 ? 100 * currentDate
                 : 50 * currentDate
                 : 0,
