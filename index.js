@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
     });
 });
 app.use("/users", userRouter);
-app.use("./books", booksRouter);
+app.use("/books", booksRouter);
 
 
 app.get("*", (req, res) => {
