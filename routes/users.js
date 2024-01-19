@@ -1,32 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const { users } = require('../data/users.json');
-/**
-  * Route: /users
-  * Method: GET
-  * Description:Get all users
-  * Access:Public
-  * Parameters:none
- */
+// const { books } = require("../data/books.json");
 
 const { Router } = require("express");
-
-//http://localhost:8081/users
-router.get("/users", (req, res) => {
-    res.status(200).json({
-        success: true,
-        data: users,
-    });
-});
 
 /**
   * Route: /users/:id
   * Method: GET
-  * Description:Get single user bi their id
+  * Description:Get single user by their id
   * Access:Public
   * Parameters:Id
  */
-router.get("/users/:id", (req, res) => {
+router.get("/:id", (req, res) => {
     const { id } = req.params;
     const user = users.find((each) => each.id === id);
     if (!user) {
@@ -38,7 +24,24 @@ router.get("/users/:id", (req, res) => {
     return res.status(200).json({
         success: true,
         message: "User Found ✅",
-        data: user,
+        data: user
+    })
+});
+
+
+
+/**
+  * Route: /users
+  * Method: GET
+  * Description:Get all users
+  * Access:Public
+  * Parameters:none
+ */
+//http://localhost:8081/users
+router.get("/", (req, res) => {
+    res.status(200).json({
+        success: true,
+        data: users
     });
 });
 
@@ -49,7 +52,7 @@ router.get("/users/:id", (req, res) => {
   * Access:Public
   * Parameters: None
  */
-router.post("/users", (req, res) => {
+router.post("/", (req, res) => {
     const { id, name, surname, email, subscriptionType, subscritionDate } = req.body;
     const user = users.find((each) => each.id == id);
     if (user) {
@@ -80,7 +83,7 @@ router.post("/users", (req, res) => {
   * Access: Public
   * Parameters: Id
  */
-router.put("/users/:id", (req, res) => {
+router.put("/:id", (req, res) => {
     const { id } = req.params;
     const { data } = req.body;
 
@@ -115,7 +118,7 @@ router.put("/users/:id", (req, res) => {
   * Access: Public
   * Parameters: ID
  */
-router.delete("/users/:id", (req, res) => {
+router.delete("/:id", (req, res) => {
     const { id } = req.params;
     const user = users.find((each) => each.id === id);
     if (!user) {
@@ -141,7 +144,7 @@ router.delete("/users/:id", (req, res) => {
   * Access:Public
   * Parameters:ID
  */
-router.get("/users/subscription-details/:id", (req, res) => {
+router.get("/subscription-details/:id", (req, res) => {
     const { id } = req.params;
     const user = users.find((each) => each.id === id);
     if (!user) {
@@ -160,7 +163,7 @@ router.get("/users/subscription-details/:id", (req, res) => {
             // getting date on a basis of data variable
             date = new Date(data);
         }
-        let days = Math.floor(data / (1000 * 60 * 60 * 24));
+        let days = Math.floor(date / (1000 * 60 * 60 * 24));
         return days;
     };
     // Subscription Type
@@ -174,6 +177,28 @@ router.get("/users/subscription-details/:id", (req, res) => {
         }
         return date;
     };
-});
+    // Jan 1 1970 UTC
+    let returnDate = getDateInDays(user.returnDate);
+    let currentDate = getDateInDays();
+    let subscriptionDate = getDateInDays(user.subscriptionDate);
+    let subscriptionExpiration = subscriptionType(subscriptionDate);
 
+    const data = {
+        ...user,
+        isSubcriptionExpired: subscriptionExpiration <= currentDate,
+        daysLeftForExpiration: subscriptionExpiration <= currentDate ? 0 : subscriptionExpiration - currentDate,
+        fine:
+            returnDate < currentDate ? subscriptionExpiration <= currentDate
+                ? 100 * currentDate
+                : 50 * currentDate
+                : 0,
+    };
+
+
+    return res.status(200).json({
+        success: true,
+        message: "Subscription details for the user is:",
+        data,
+    });
+});
 module.exports = router;
